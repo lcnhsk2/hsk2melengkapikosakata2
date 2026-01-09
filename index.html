@@ -1,682 +1,118 @@
 <!DOCTYPE html>
-<html lang="zh">
+<!-- Created with iSpring --><!-- 1576 864 --><!--version 11.7.0.5 --><!--type html --><!--mainFolder ./ -->
+<html style=background-color:#dcdee0;>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HSK2 Game - Melengkapi Kalimat</title>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/><meta name="format-detection" content="telephone=no"/><meta name="apple-mobile-web-app-capable" content="yes"/><meta name="apple-mobile-web-app-status-bar-style" content="black"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><meta name="msapplication-tap-highlight" content="no"/><title>HSK2 MELENGKAPI KOSAKATA</title><link rel="apple-touch-icon-precomposed" href="data/apple-touch-icon.png"/><link rel="shortcut icon" type="image/ico" href="data/favicon.ico"/><style>body {background-color:#dcdee0;}#spr0_2f1c0f {display:none;}</style>
+    
+    
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
-        }
-        body {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .container {
-            max-width: 900px;
-            width: 100%;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            margin: 20px 0;
-            color: #e74c3c;
-        }
-        h1 {
-            font-size: 2.8rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-            background: linear-gradient(to right, #e74c3c, #e67e22);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        .game-area {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            margin-bottom: 25px;
-        }
-        .sentence-display {
-            font-size: 1.8rem;
-            line-height: 2.2rem;
-            min-height: 120px;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: #fdf6e3;
-            border-radius: 15px;
-            border: 2px dashed #ffcc80;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: #34495e;
-        }
-        .blank {
-            display: inline-block;
-            min-width: 80px;
-            height: 40px;
-            border-bottom: 3px solid #3498db;
-            margin: 0 8px;
-            vertical-align: middle;
-            font-size: 1.6rem;
-            color: #2980b9;
-            background-color: #e3f2fd;
-            border-radius: 5px;
-            padding: 5px 10px;
-        }
-        .word-bank {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 25px;
-        }
-        .word-item {
-            background: linear-gradient(145deg, #64b5f6, #2196f3);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            border: none;
-            user-select: none;
-        }
-        .word-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-            background: linear-gradient(145deg, #42a5f5, #1e88e5);
-        }
-        .word-item.selected {
-            background: linear-gradient(145deg, #4caf50, #2e7d32);
-            transform: scale(1.05);
-            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
-        }
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .btn {
-            padding: 14px 30px;
-            font-size: 1.3rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .btn-check {
-            background: linear-gradient(to right, #4caf50, #2e7d32);
-            color: white;
-        }
-        .btn-check:hover {
-            background: linear-gradient(to right, #66bb6a, #388e3c);
-            transform: translateY(-3px);
-        }
-        .btn-next {
-            background: linear-gradient(to right, #e74c3c, #c0392b);
-            color: white;
-        }
-        .btn-next:hover {
-            background: linear-gradient(to right, #e95e50, #d32f2f);
-            transform: translateY(-3px);
-        }
-        .feedback {
-            text-align: center;
-            font-size: 1.6rem;
-            font-weight: bold;
-            min-height: 60px;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 15px;
-        }
-        .correct {
-            color: #27ae60;
-            background: #e8f5e9;
-            border: 2px solid #2ecc71;
-        }
-        .incorrect {
-            color: #e74c3c;
-            background: #fdf2f2;
-            border: 2px solid #e74c3c;
-        }
-        .score-board {
-            display: flex;
-            justify-content: space-between;
-            background: white;
-            padding: 15px 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-        .score {
-            color: #2980b9;
-        }
-        .progress {
-            width: 100%;
-            height: 20px;
-            background: #ecf0f1;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(to right, #2ecc71, #3498db);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1000;
-        }
-        .instructions {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        .instructions h2 {
-            color: #e74c3c;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        .instructions ul {
-            padding-left: 25px;
-        }
-        .instructions li {
-            margin-bottom: 10px;
-            color: #34495e;
-        }
-        @media (max-width: 768px) {
-            .sentence-display {
-                font-size: 1.4rem;
-                line-height: 1.8rem;
-            }
-            .word-bank {
-                gap: 8px;
-            }
-            .word-item {
-                padding: 8px 15px;
-                font-size: 1rem;
-            }
-            .btn {
-                padding: 12px 20px;
-                font-size: 1.1rem;
-            }
-        }
+		#playerView {
+			position:absolute;
+			-webkit-tap-highlight-color:rgba(0,0,0,0);
+			-webkit-user-select:none;
+			-moz-user-select:none;
+			-webkit-touch-callout:none;
+			-webkit-user-drag:none;
+		}
+		#playerView * {
+			position:absolute;
+		}
+		#preloader {
+			width: 50px;
+			height: 50px;
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			margin: auto;
+			border-radius: 10px;
+			background-color: rgba(0, 0, 0, 0.5);
+		}
+
+		#preloader::after {
+			content: '';
+			position: absolute;
+			background: url(data:image/png;base64,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UmVhZHlxyWU8AAADcmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4gPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iQWRvYmUgWE1QIENvcmUgNS42LWMwNjcgNzkuMTU3NzQ3LCAyMDE1LzAzLzMwLTIzOjQwOjQyICAgICAgICAiPiA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPiA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtbG5zOnhtcD0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wLyIgeG1wTU06T3JpZ2luYWxEb2N1bWVudElEPSJ4bXAuZGlkOmFjOGVjNDFhLTZkYWItODQ0Ni04YzkzLWU1Mjk3N2YwMmE4NSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDpFRThCNzU3NDYzNjcxMUU1QTZDRUE5NTVGOUJGQ0E3MCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDpFRThCNzU3MzYzNjcxMUU1QTZDRUE5NTVGOUJGQ0E3MCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0OWFlZmI1OC00ZWFmLWQ3NDgtYTI0ZS0zNmNhNGQ2M2QwNTYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6N0MwQkFBM0M2MjAxMTFFNUI4QjBERTk4MjY5MjQwQjUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6MGSVVAAAE3klEQVR42uycW4hWVRiG15Q4eYzGQySSQlriEQ9BF2mE4iSdESRRIb0RD+mNmHgICjqQEGUe6sqgCy1i0iRinAzELrooQhHLGQURUTzMiM7omCLj+/F/czX/t/890z6s9e/3hZcZ1l6z19r7mXXca62arq4uR/mjh/gKCIQiEAKhCIRAKAIhEIpACIQiEIpACIQiEAKhCIRAKAIhEMoX9Yu62NbWxjcUobq6OpaQQpcQz/QwPBOeDU+Fx8Oj4UfhoRrnJnwDvgC3wCfgY/Bf8P0QHrImahmQB1VWLfwGvAieqy+/LxJIR+Dv4QPwf75WWb4CGQavg9fo70mqFd4F79DfCSRCA+HN8Hp4cMppdcBfwB/Bt9mo99Sr8Cl4SwYwnKYhaf2jaXMconoE/hL+CR6TQ/pPato7NS+FbtSfgH+Gp8eMfwv+HT6qpakZvqzVT/d//ePw0/BEeI72ygbFvP/f8MvwpSK2IfLSGuGxFeJ1aby98CG4s5fpDNAqaTlcL89cIf45jddcpDZknI4PKsFo0NKzQLusnX1Iq1P/doHe60CF+GM1b+OK0obIYO5XeGREnLPwfHghfDzBtOVeb+q9z0bEG6njltHVDqQ2RuP9HTwDbkoxH02axv4YjX1tNQP5LKIBl7ZiK/yWToGkLUljsaZpNaTTNc9VCeR1eHUEjHfgD3OoQiXNVRFQVmveqwrIEHh3xPXNOp2Rl77WPFiSvA+tJiCb4FHGNanHP/FggCp52Gdck7y/Wy0Dw2Hatx9s9KZmZNRmxC3JMjh8qsy1Du0St4Y+DomaKFzlEQxRu+apnOQZ1oVeZfWPeMCGlLu2/6dL3BDRwPcPGYiMjocbvaoPnL963+h1DddnChbIMiP8cMIj8KQln34be/lM3gOREW69cW2v81/fGOH1aY7e0wTyrNGYyxT6wQCAHNS8lmvcZ4UIZL4RLt8z7gQA5I7mtZyeCxHIS0b4UReOrLw+EyIQqxScDAiIldcJIQLZYTTmvwUEpMUIHxMikB/gta40PXIF/lwHVrcCAnLVCH8srQR9X7mYt2RUbq1yrOFia390N9SReugaYoR3EEg+GmGEtxNIPhpvhJ8nkHw02Qj/l0Dy0Rwj/DSBZC9ZeD3buPYHgWSv11z5RdrSw/qTQLLX20Z4o0toSxyBxJdsKrVmq79NM2ECKa/3XPltC9fgXwgkW81zpVX35fSVS3HahEB6SqZK9hjXujeJOgLJTrLG19qos1OrLALJSLL+eLFx7SL8cRaZIJCSVrrSfnVL8qHtJoFkoy3ablibQeWz849ZZaZfgUHIfg/Z97EkIs5xLR2OQNLv2u5x0Ttt5UShV1wfj91glRVP01xp8UVTBRiyuOFFheJYQpKVzNrKwQErXPyDA2SF+5k8MhsykCnwPdfzaA3ZYy6nREyCX4Cfd/EPs+nV0RoEUlqWsx1eCie9Bkc2nW5wOa87Dg3Ipy75bWXntSd1yIcHDK1RT3KzTIcOBif6AqOo3d42HX/I0tZW3zIXWgnp68chmfaQjZxyoKac0bXNRxghlpCN2m1dpj/btXEfpD0uqYaua89Luq3dx8TKN3AeE1vt4mLrAohACIQiEAKhCIRAKAIhEIpACq7IqROKJYRA+AoIhCIQAqEIhEAoAiEQikCKrQcCDABHPgH2w7NQdAAAAABJRU5ErkJggg==);
+			background-size: cover;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			animation: preloader_spin 1s infinite linear;
+			-webkit-animation: preloader_spin 1s infinite linear;
+		}
+
+		@keyframes preloader_spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
+		@-webkit-keyframes preloader_spin { 0% {-webkit-transform: rotate(0deg);} 100% {-webkit-transform: rotate(360deg);}}
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎮 HSK2 Kalimat Seru!</h1>
-            <p class="subtitle">Lengkapi kalimat dengan kata yang tepat dari bank kata</p>
-        </header>
-
-        <div class="score-board">
-            <div>Skor: <span id="score" class="score">0</span></div>
-            <div>Level: <span id="level">1</span> / 15</div>
-        </div>
-        <div class="progress">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-
-        <div class="game-area">
-            <div class="sentence-display" id="sentence-display">
-                <!-- Kalimat akan muncul di sini -->
-            </div>
-            <div class="word-bank" id="word-bank">
-                <!-- Kata-kata akan di-generate di sini -->
-            </div>
-            <div class="controls">
-                <button class="btn btn-check" id="check-btn">Periksa Jawaban ✅</button>
-                <button class="btn btn-next" id="next-btn">Soal Berikutnya ➡️</button>
-            </div>
-            <div class="feedback" id="feedback"></div>
-        </div>
-
-        <div class="instructions">
-            <h2>🎯 Cara Bermain</h2>
-            <ul>
-                <li>Pilih satu kata dari bank kata untuk melengkapi kalimat.</li>
-                <li>Klik "Periksa Jawaban" untuk mengetahui apakah jawaban Anda benar.</li>
-                <li>Jika benar, lanjut ke soal berikutnya. Jika salah, coba lagi!</li>
-                <li>Kumpulkan poin sebanyak-banyaknya dalam 15 soal.</li>
-            </ul>
-        </div>
-    </div>
-
+	<div id="preloader"></div>
+	<script src="data/browsersupport.js?A617B70D"></script>
+	<script src="data/player.js?A617B70D"></script>
+    <div id="content"></div>
+    <div id="spr0_2f1c0f"></div>
     <script>
-        // Daftar semua kosakata HSK2
-        const vocabulary = [
-            "旅游", "觉得", "最", "也", "运动", "踢足球", "一起", "要", "新", "它", "眼睛",
-            "生病", "每", "早上", "跑步", "起床", "药", "身体", "出院", "出", "高", "米", "知道", "休息", "忙", "时间",
-            "手表", "千", "报纸", "送", "一下", "牛奶", "房间", "丈夫", "旁边", "真", "粉色", "颜色", "左边", "红色",
-            "生日", "快乐", "给", "接", "晚上", "问", "非常", "开始", "已经", "长", "两", "帮", "介绍",
-            "外边", "准备", "就", "鱼", "吧", "件", "还", "可以", "不错", "考试", "意思", "咖啡", "对", "以后",
-            "门", "外", "自行车", "羊肉", "好吃", "面条", "打篮球", "因为", "所以", "游泳", "经常", "公斤", "姐姐",
-            "教室", "机场", "路", "离", "公司", "远", "公共汽车", "小时", "慢", "快", "过", "走", "到",
-            "再", "让", "告诉", "等", "找", "事情", "服务员", "白", "黑", "贵",
-            "错", "从", "跳舞", "第一", "希望", "问题", "欢迎", "上班", "懂", "完", "题",
-            "课", "帮助", "别", "哥哥", "鸡蛋", "西瓜", "正在", "手机", "洗",
-            "唱歌", "男", "女", "孩子", "右边", "比", "便宜", "说话", "可能", "去年", "姓", "得", "妻子", "雪", "零", "度", "穿", "进", "弟弟", "近",
-            "着", "手", "拿", "铅笔", "班", "长", "宾馆", "一直", "往", "路口",
-            "有意思", "但是", "虽然", "次", "玩儿", "晴", "百",
-            "日", "新年", "票", "火车站", "大家", "更", "妹妹", "阴"
-        ];
+		document.addEventListener("DOMContentLoaded", () => (function(startup){
+			function start(savedPresentationState)
+			{
+				var presInfo = "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";
+				PresentationPlayer.start(presInfo, "content", "playerView", onPlayerInit, savedPresentationState);
+				function onPlayerInit(player)
+				{
+					(function(player){
+	(function(player)
+{
+	function findConnector(win)
+	{
+		var retries = 0;
+		while (!win.ispringPresentationConnector && win.parent && win.parent != win)
+		{
+			++retries;
+			if (retries > 7)
+			{
+				return null;
+			}
 
-        // Soal-soal HSK2 (kalimat dengan satu kata hilang)
-        const questions = [
-      { sentence: "我每天___去公园跑步。", answer: "早上", options: ["早上", "晚上", "中午", "下午"] },
-      { sentence: "这个苹果___好吃。", answer: "非常", options: ["非常", "很多", "一些", "常常"] },
-      { sentence: "他喜欢___足球。", answer: "踢", options: ["踢", "打", "玩", "做"] },
-      { sentence: "我想___你一起去旅游。", answer: "和", options: ["和", "跟", "给", "对"] },
-      { sentence: "这件衣服___漂亮。", answer: "最", options: ["最", "太", "很", "更"] },
-      { sentence: "___你叫什么名字？", answer: "请问", options: ["请问", "问题", "回答", "告诉"] },
-      { sentence: "我___一杯咖啡。", answer: "要", options: ["要", "想", "需要", "可以"] },
-      { sentence: "他___在教室里学习。", answer: "正在", options: ["正在", "已经", "还是", "或者"] },
-      { sentence: "这本书比那本___有意思。", answer: "更", options: ["更", "很", "太", "最"] },
-      { sentence: "___天气很好，我们去游泳吧。", answer: "因为", options: ["因为", "所以", "但是", "虽然"] },
-      { sentence: "我___他的电话号码。", answer: "知道", options: ["知道", "认识", "明白", "懂"] },
-      { sentence: "你___几点起床？", answer: "每天", options: ["每天", "昨天", "明天", "今天"] },
-      { sentence: "这个菜___好吃。", answer: "真", options: ["真", "很", "太", "非常"] },
-      { sentence: "我的房间在你的___。", answer: "旁边", options: ["旁边", "里面", "外面", "上面"] },
-      { sentence: "我___坐飞机去北京。", answer: "准备", options: ["准备", "打算", "想要", "希望"] },
-      { sentence: "请___一下，我马上就来。", answer: "等", options: ["等", "站", "坐", "走"] },
-      { sentence: "我___看书和听音乐。", answer: "喜欢", options: ["喜欢", "爱好", "想", "要"] },
-      { sentence: "这个电影___，很有意思。", answer: "不错", options: ["不错", "好看", "漂亮", "高兴"] },
-      { sentence: "从我家___学校很近。", answer: "到", options: ["到", "去", "从", "在"] },
-      { sentence: "___下雪了，天气很冷。", answer: "外边", options: ["外边", "里边", "上边", "下边"] },
-      { sentence: "我___你是对的。", answer: "觉得", options: ["觉得", "认为", "知道", "明白"] },
-      { sentence: "___你不来？", answer: "为什么", options: ["为什么", "怎么", "什么", "哪里"] },
-      { sentence: "我___喜欢运动。", answer: "也", options: ["也", "都", "还", "又"] },
-      { sentence: "这是一本___书。", answer: "新", options: ["新", "旧", "好", "大"] },
-      { sentence: "___的眼睛很漂亮。", answer: "它", options: ["它", "我", "你", "们"] },
-      { sentence: "他___了，需要休息。", answer: "生病", options: ["生病", "高兴", "忙", "累"] },
-      { sentence: "医生让我吃___。", answer: "药", options: ["药", "饭", "菜", "水"] },
-      { sentence: "运动对___很好。", answer: "身体", options: ["身体", "头", "手", "脚"] },
-      { sentence: "他明天可以___。", answer: "出院", options: ["出院", "住院", "看病", "休息"] },
-      { sentence: "请___去吧。", answer: "出", options: ["出", "进", "来", "回"] },
-      { sentence: "他很___，有1米80。", answer: "高", options: ["高", "矮", "胖", "瘦"] },
-      { sentence: "这个房间10___长。", answer: "米", options: ["米", "厘米", "公里", "尺"] },
-      { sentence: "我很___，没有时间。", answer: "忙", options: ["忙", "累", "闲", "懒"] },
-      { sentence: "___过得真快。", answer: "时间", options: ["时间", "日子", "年", "月"] },
-      { sentence: "这个___很贵。", answer: "手表", options: ["手表", "手机", "眼镜", "钱包"] },
-      { sentence: "这个要一___元。", answer: "千", options: ["千", "百", "万", "十"] },
-      { sentence: "爸爸在看___。", answer: "报纸", options: ["报纸", "书", "电视", "电影"] },
-      { sentence: "我要___你一个礼物。", answer: "送", options: ["送", "给", "拿", "买"] },
-      { sentence: "我喝___牛奶。", answer: "一下", options: ["一下", "一点", "一些", "一杯"] },
-      { sentence: "早上我喝一杯___。", answer: "牛奶", options: ["牛奶", "水", "茶", "咖啡"] },
-      { sentence: "这是我的___。", answer: "房间", options: ["房间", "家", "房子", "屋子"] },
-      { sentence: "她的___很忙。", answer: "丈夫", options: ["丈夫", "妻子", "爸爸", "妈妈"] },
-      { sentence: "我喜欢___的衣服。", answer: "粉色", options: ["粉色", "蓝色", "绿色", "黄色"] },
-      { sentence: "你喜欢什么___？", answer: "颜色", options: ["颜色", "衣服", "东西", "样子"] },
-      { sentence: "银行在___。", answer: "左边", options: ["左边", "右边", "前边", "后边"] },
-      { sentence: "我喜欢___的花。", answer: "红色", options: ["红色", "白色", "黑色", "绿色"] },
-      { sentence: "今天是我的___。", answer: "生日", options: ["生日", "节日", "假日", "周末"] },
-      { sentence: "祝你生日___！", answer: "快乐", options: ["快乐", "高兴", "开心", "幸福"] },
-      { sentence: "我___你一本书。", answer: "给", options: ["给", "送", "拿", "买"] },
-      { sentence: "我去机场___她。", answer: "接", options: ["接", "送", "等", "找"] },
-      { sentence: "我___八点回家。", answer: "晚上", options: ["晚上", "早上", "中午", "下午"] },
-      { sentence: "我想___你一个问题。", answer: "问", options: ["问", "告诉", "说", "讲"] },
-      { sentence: "考试___开始了。", answer: "已经", options: ["已经", "正在", "马上", "快要"] },
-      { sentence: "她的头发很___。", answer: "长", options: ["长", "短", "多", "少"] },
-      { sentence: "我有___个苹果。", answer: "两", options: ["两", "二", "三", "四"] },
-      { sentence: "请___我做这道题。", answer: "帮", options: ["帮", "教", "给", "让"] },
-      { sentence: "请___一下你自己。", answer: "介绍", options: ["介绍", "说", "讲", "告诉"] },
-      { sentence: "天气很好，我们___去玩儿吧。", answer: "就", options: ["就", "才", "都", "也"] },
-      { sentence: "我喜欢吃___。", answer: "鱼", options: ["鱼", "肉", "菜", "饭"] },
-      { sentence: "我们一起去___？", answer: "吧", options: ["吧", "呢", "啊", "吗"] },
-      { sentence: "我买了一___衣服。", answer: "件", options: ["件", "条", "个", "双"] },
-      { sentence: "我___有一点儿时间。", answer: "还", options: ["还", "也", "都", "又"] },
-      { sentence: "你___进来。", answer: "可以", options: ["可以", "能", "会", "要"] },
-      { sentence: "这个___是什么？", answer: "意思", options: ["意思", "问题", "事情", "东西"] },
-      { sentence: "明天有___，我要好好准备。", answer: "考试", options: ["考试", "比赛", "会议", "活动"] },
-      { sentence: "___不起，我错了。", answer: "对", options: ["对", "是", "好", "行"] },
-      { sentence: "___我们再见面吧。", answer: "以后", options: ["以后", "以前", "现在", "将来"] },
-      { sentence: "请开___。", answer: "门", options: ["门", "窗", "灯", "电视"] },
-      { sentence: "___面很冷。", answer: "外", options: ["外", "里", "上", "下"] },
-      { sentence: "我骑___上学。", answer: "自行车", options: ["自行车", "汽车", "火车", "飞机"] },
-      { sentence: "我喜欢吃___。", answer: "羊肉", options: ["羊肉", "牛肉", "鸡肉", "猪肉"] },
-      { sentence: "这个___很好吃。", answer: "面条", options: ["面条", "米饭", "饺子", "包子"] },
-      { sentence: "他喜欢___。", answer: "打篮球", options: ["打篮球", "踢足球", "游泳", "跑步"] },
-      { sentence: "___下雨了，___我不去了。", answer: "因为", options: ["因为", "所以", "但是", "虽然"] },
-      { sentence: "因为下雨了，___我不去了。", answer: "所以", options: ["所以", "因为", "但是", "虽然"] },
-      { sentence: "我___去游泳。", answer: "经常", options: ["经常", "总是", "有时", "很少"] },
-      { sentence: "我买了5___苹果。", answer: "公斤", options: ["公斤", "米", "个", "块"] },
-      { sentence: "我___在北京工作。", answer: "姐姐", options: ["姐姐", "妹妹", "哥哥", "弟弟"] },
-      { sentence: "学生在___上课。", answer: "教室", options: ["教室", "办公室", "房间", "客厅"] },
-      { sentence: "我要去___坐飞机。", answer: "机场", options: ["机场", "火车站", "汽车站", "地铁站"] },
-      { sentence: "我在___上走。", answer: "路", options: ["路", "街", "道", "桥"] },
-      { sentence: "学校___我家很近。", answer: "离", options: ["离", "从", "到", "在"] },
-      { sentence: "他在___上班。", answer: "公司", options: ["公司", "学校", "医院", "商店"] },
-      { sentence: "我家离学校很___。", answer: "远", options: ["远", "近", "大", "小"] },
-      { sentence: "我坐___去上班。", answer: "公共汽车", options: ["公共汽车", "出租车", "地铁", "火车"] },
-      { sentence: "开车要一个___。", answer: "小时", options: ["小时", "分钟", "天", "星期"] },
-      { sentence: "他走得很___。", answer: "慢", options: ["慢", "快", "好", "远"] },
-      { sentence: "你走___一点！", answer: "快", options: ["快", "慢", "好", "多"] },
-      { sentence: "我___过北京。", answer: "去", options: ["去", "来", "到", "走"] },
-      { sentence: "请往前___。", answer: "走", options: ["走", "跑", "来", "去"] },
-      { sentence: "我___了学校。", answer: "到", options: ["到", "去", "来", "走"] },
-      { sentence: "我们___见！", answer: "再", options: ["再", "又", "还", "也"] },
-      { sentence: "老师___我们写作业。", answer: "让", options: ["让", "叫", "给", "帮"] },
-      { sentence: "请___我怎么去。", answer: "告诉", options: ["告诉", "说", "讲", "问"] },
-      { sentence: "我去___他。", answer: "找", options: ["找", "看", "等", "接"] },
-      { sentence: "我有一个___要做。", answer: "事情", options: ["事情", "工作", "问题", "东西"] },
-      { sentence: "___，要一杯咖啡。", answer: "服务员", options: ["服务员", "老师", "医生", "司机"] },
-      { sentence: "这是___颜色。", answer: "白", options: ["白", "黑", "红", "蓝"] },
-      { sentence: "我穿___色的衣服。", answer: "黑", options: ["黑", "白", "红", "蓝"] },
-      { sentence: "这个东西太___了。", answer: "贵", options: ["贵", "便宜", "好", "坏"] },
-      { sentence: "你说得不___。", answer: "错", options: ["错", "对", "好", "行"] },
-      { sentence: "___北京到上海。", answer: "从", options: ["从", "到", "离", "在"] },
-      { sentence: "她喜欢___。", answer: "跳舞", options: ["跳舞", "唱歌", "画画", "写字"] },
-      { sentence: "这是我___次来中国。", answer: "第一", options: ["第一", "第二", "一", "二"] },
-      { sentence: "我___你身体健康。", answer: "希望", options: ["希望", "想", "觉得", "认为"] },
-      { sentence: "你有什么___吗？", answer: "问题", options: ["问题", "事情", "办法", "意见"] },
-      { sentence: "___来到我们学校。", answer: "欢迎", options: ["欢迎", "请", "谢谢", "对不起"] },
-      { sentence: "他每天8点___。", answer: "上班", options: ["上班", "下班", "工作", "休息"] },
-      { sentence: "你___中文吗？", answer: "懂", options: ["懂", "会", "知道", "认识"] },
-      { sentence: "作业做___了。", answer: "完", options: ["完", "好", "对", "错"] },
-      { sentence: "这道___很难。", answer: "题", options: ["题", "问题", "课", "作业"] },
-      { sentence: "我们上___吧。", answer: "课", options: ["课", "学", "班", "课"] },
-      { sentence: "谢谢你的___。", answer: "帮助", options: ["帮助", "帮忙", "帮", "助"] },
-      { sentence: "___客气！", answer: "别", options: ["别", "不", "没", "不要"] },
-      { sentence: "我___在日本。", answer: "哥哥", options: ["哥哥", "弟弟", "姐姐", "妹妹"] },
-      { sentence: "早上我吃___。", answer: "鸡蛋", options: ["鸡蛋", "面包", "牛奶", "水果"] },
-      { sentence: "夏天我喜欢吃___。", answer: "西瓜", options: ["西瓜", "苹果", "香蕉", "橙子"] },
-      { sentence: "他___看电视呢。", answer: "正在", options: ["正在", "已经", "马上", "刚才"] },
-      { sentence: "我的___在哪儿？", answer: "手机", options: ["手机", "电话", "电脑", "相机"] },
-      { sentence: "我要___手。", answer: "洗", options: ["洗", "擦", "抹", "摸"] },
-      { sentence: "她喜欢___歌。", answer: "唱", options: ["唱", "听", "写", "说"] },
-      { sentence: "他是___的。", answer: "男", options: ["男", "女", "老", "小"] },
-      { sentence: "她是___的。", answer: "女", options: ["女", "男", "老", "小"] },
-      { sentence: "那个___很可爱。", answer: "孩子", options: ["孩子", "学生", "人", "朋友"] },
-      { sentence: "银行在___。", answer: "右边", options: ["右边", "左边", "前边", "后边"] },
-      { sentence: "这个___那个贵。", answer: "比", options: ["比", "和", "跟", "对"] },
-      { sentence: "这个很___。", answer: "便宜", options: ["便宜", "贵", "好", "坏"] },
-      { sentence: "别___了！", answer: "说话", options: ["说话", "讲话", "谈话", "聊天"] },
-      { sentence: "他___会来。", answer: "可能", options: ["可能", "一定", "肯定", "当然"] },
-      { sentence: "我___去过北京。", answer: "去年", options: ["去年", "今年", "明年", "每年"] },
-      { sentence: "你___什么？", answer: "姓", options: ["姓", "叫", "名", "字"] },
-      { sentence: "你跑___真快！", answer: "得", options: ["得", "的", "地", "着"] },
-      { sentence: "他的___很漂亮。", answer: "妻子", options: ["妻子", "丈夫", "爱人", "老婆"] },
-      { sentence: "冬天会下___。", answer: "雪", options: ["雪", "雨", "冰", "霜"] },
-      { sentence: "今天___度。", answer: "零", options: ["零", "一", "十", "百"] },
-      { sentence: "今天20___。", answer: "度", options: ["度", "℃", "度数", "温度"] },
-      { sentence: "我要___衣服。", answer: "穿", options: ["穿", "戴", "披", "套"] },
-      { sentence: "请___来。", answer: "进", options: ["进", "出", "来", "去"] },
-      { sentence: "我___在美国。", answer: "弟弟", options: ["弟弟", "哥哥", "姐姐", "妹妹"] },
-      { sentence: "学校离我家很___。", answer: "近", options: ["近", "远", "大", "小"] },
-      { sentence: "她穿___一件红衣服。", answer: "着", options: ["着", "了", "过", "的"] },
-      { sentence: "我用___写字。", answer: "手", options: ["手", "笔", "本", "纸"] },
-      { sentence: "请___着这本书。", answer: "拿", options: ["拿", "带", "提", "抱"] },
-      { sentence: "我用___写字。", answer: "铅笔", options: ["铅笔", "钢笔", "毛笔", "圆珠笔"] },
-      { sentence: "我们是一个___的。", answer: "班", options: ["班", "课", "组", "队"] },
-      { sentence: "你头发真___！", answer: "长", options: ["长", "短", "多", "少"] },
-      { sentence: "我们住在___。", answer: "宾馆", options: ["宾馆", "酒店", "旅馆", "饭店"] },
-      { sentence: "我___往前走。", answer: "一直", options: ["一直", "总是", "常常", "经常"] },
-      { sentence: "___前走100米。", answer: "往", options: ["往", "向", "朝", "对"] },
-      { sentence: "在___右转。", answer: "路口", options: ["路口", "路边", "路上", "路中"] },
-      { sentence: "这个很___。", answer: "有意思", options: ["有意思", "没意思", "好玩", "无聊"] },
-      { sentence: "很贵，___很好。", answer: "但是", options: ["但是", "可是", "不过", "然而"] },
-      { sentence: "___很贵，但是很好。", answer: "虽然", options: ["虽然", "尽管", "即使", "就算"] },
-      { sentence: "我去过三___北京。", answer: "次", options: ["次", "遍", "回", "趟"] },
-      { sentence: "我喜欢___儿。", answer: "玩", options: ["玩", "游", "乐", "耍"] },
-      { sentence: "今天天气___。", answer: "晴", options: ["晴", "阴", "雨", "雪"] },
-      { sentence: "一___个学生。", answer: "百", options: ["百", "千", "万", "十"] },
-      { sentence: "今天是___期一。", answer: "星", options: ["星", "周", "礼", "天"] },
-      { sentence: "明天是新___。", answer: "年", options: ["年", "月", "日", "天"] },
-      { sentence: "我要买飞机___。", answer: "票", options: ["票", "卡", "证", "券"] },
-      { sentence: "我要去___。", answer: "火车站", options: ["火车站", "汽车站", "机场", "码头"] },
-      { sentence: "___都来了。", answer: "大家", options: ["大家", "人家", "我们", "你们"] },
-      { sentence: "今天___冷了。", answer: "更", options: ["更", "很", "太", "最"] },
-      { sentence: "我___在上海工作。", answer: "妹妹", options: ["妹妹", "姐姐", "弟弟", "哥哥"] },
-      { sentence: "今天天气___。", answer: "阴", options: ["阴", "晴", "雨", "雪"] }
-        ];
+			win = win.parent;
+		}
+		return win.ispringPresentationConnector;
+	}
 
-        // Variabel game
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let selectedWord = null;
+	function getConnector()
+	{
+		var api = findConnector(window);
+		if (!api && window.opener && (typeof(window.opener) != "undefined"))
+		{
+			api = findConnector(window.opener);
+		}
+		return api;
+	}
 
-        // Elemen DOM
-        const sentenceDisplay = document.getElementById('sentence-display');
-        const wordBank = document.getElementById('word-bank');
-        const checkBtn = document.getElementById('check-btn');
-        const nextBtn = document.getElementById('next-btn');
-        const feedback = document.getElementById('feedback');
-        const scoreElement = document.getElementById('score');
-        const levelElement = document.getElementById('level');
-        const progressBar = document.getElementById('progress-bar');
+	try
+	{
+		var connector = getConnector();
+		if (connector)
+		{
+			connector.register(player);
+		}
+	}
+	catch (e) {}
+})(player);
 
-        // Inisialisasi game
-        function initGame() {
-            loadQuestion();
-            updateScore();
-        }
+})(player);
 
-        // Muat soal saat ini
-        function loadQuestion() {
-            if (currentQuestionIndex >= questions.length) {
-                endGame();
-                return;
-            }
+					var preloader = document.getElementById("preloader");
+					preloader.parentNode.removeChild(preloader);
+				}
+			}
 
-            const q = questions[currentQuestionIndex];
-            levelElement.textContent = (currentQuestionIndex + 1) + " / " + questions.length;
-            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
-            progressBar.style.width = progressPercent + '%';
-
-            // Tampilkan kalimat dengan blank
-            sentenceDisplay.innerHTML = q.sentence.replace('___', '<span class="blank" id="blank">?</span>');
-
-            // Buat pilihan kata
-            wordBank.innerHTML = '';
-            const allOptions = [...q.options];
-            
-            // Pastikan jawaban benar ada di opsi
-            if (!allOptions.includes(q.answer)) {
-                allOptions.push(q.answer);
-                // Acak lagi
-                shuffleArray(allOptions);
-                allOptions.length = 4;
-            }
-
-            shuffleArray(allOptions);
-
-            allOptions.forEach(word => {
-                const btn = document.createElement('button');
-                btn.className = 'word-item';
-                btn.textContent = word;
-                btn.onclick = () => selectWord(btn, word);
-                wordBank.appendChild(btn);
-            });
-
-            // Reset state
-            selectedWord = null;
-            feedback.textContent = '';
-            feedback.className = 'feedback';
-            nextBtn.style.display = 'none';
-        }
-
-        // Pilih kata
-        function selectWord(element, word) {
-            // Hilangkan seleksi sebelumnya
-            document.querySelectorAll('.word-item').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            // Tandai yang dipilih
-            element.classList.add('selected');
-            selectedWord = word;
-            
-            // Tampilkan di blank
-            const blank = document.getElementById('blank');
-            if (blank) {
-                blank.textContent = word;
-            }
-        }
-
-        // Periksa jawaban
-        checkBtn.addEventListener('click', () => {
-            if (!selectedWord) {
-                feedback.textContent = '⚠️ Silakan pilih satu kata terlebih dahulu!';
-                feedback.className = 'feedback incorrect';
-                return;
-            }
-
-            const correct = selectedWord === questions[currentQuestionIndex].answer;
-            
-            if (correct) {
-                score++;
-                feedback.textContent = '🎉 Benar! Jawaban yang tepat.';
-                feedback.className = 'feedback correct';
-                createConfetti();
-                scoreElement.textContent = score;
-                
-                // Tampilkan tombol berikutnya
-                nextBtn.style.display = 'inline-block';
-                checkBtn.style.display = 'none';
-            } else {
-                feedback.textContent = '❌ Salah. Coba lagi!';
-                feedback.className = 'feedback incorrect';
-                
-                // Goyangkan blank
-                const blank = document.getElementById('blank');
-                if (blank) {
-                    blank.style.animation = 'none';
-                    setTimeout(() => {
-                        blank.style.animation = 'shake 0.5s';
-                    }, 10);
-                }
-            }
-        });
-
-        // Soal berikutnya
-        nextBtn.addEventListener('click', () => {
-            currentQuestionIndex++;
-            checkBtn.style.display = 'inline-block';
-            nextBtn.style.display = 'none';
-            loadQuestion();
-        });
-
-        // Akhiri game
-        function endGame() {
-            const percentage = Math.round((score / questions.length) * 100);
-            let message = `🎮 Game Selesai!\n\nSkor Anda: ${score} / ${questions.length} (${percentage}%)`;
-            
-            if (percentage >= 90) {
-                message += "\n\n🌟 Luar biasa! Anda ahli HSK2!";
-            } else if (percentage >= 70) {
-                message += "\n\n👍 Bagus! Terus belajar ya!";
-            } else if (percentage >= 50) {
-                message += "\n\n🙂 Lumayan! Coba lagi untuk skor lebih tinggi.";
-            } else {
-                message += "\n\n💪 Jangan menyerah! Latihan lagi yuk!";
-            }
-            
-            sentenceDisplay.innerHTML = `<div style="font-size:1.8rem; color:#e74c3c;">${message}</div>`;
-            wordBank.innerHTML = '';
-            feedback.innerHTML = '';
-            checkBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            
-            // Tombol ulang game
-            const restartBtn = document.createElement('button');
-            restartBtn.className = 'btn btn-check';
-            restartBtn.textContent = 'Ulangi Game 🔁';
-            restartBtn.style.marginTop = '20px';
-            restartBtn.onclick = restartGame;
-            sentenceDisplay.appendChild(document.createElement('br'));
-            sentenceDisplay.appendChild(restartBtn);
-        }
-
-        // Ulangi game
-        function restartGame() {
-            currentQuestionIndex = 0;
-            score = 0;
-            scoreElement.textContent = score;
-            checkBtn.style.display = 'inline-block';
-            nextBtn.style.display = 'none';
-            loadQuestion();
-        }
-
-        // Fungsi bantu
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        function updateScore() {
-            scoreElement.textContent = score;
-        }
-
-        function createConfetti() {
-            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#1abc9c'];
-            for (let i = 0; i < 100; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.width = Math.random() * 10 + 5 + 'px';
-                confetti.style.height = confetti.style.width;
-                document.body.appendChild(confetti);
-
-                const animation = confetti.animate([
-                    { top: '-10px', transform: 'translateX(0px) rotate(0deg)' },
-                    { top: '100vh', transform: `translateX(${(Math.random() - 0.5) * 200}px) rotate(${Math.random() * 360}deg)` }
-                ], {
-                    duration: Math.random() * 2000 + 2000,
-                    easing: 'cubic-bezier(0,0.9,0.57,1)'
-                });
-
-                animation.onfinish = () => confetti.remove();
-            }
-        }
-
-        // Tambahkan animasi shake ke CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0%, 100% { transform: translateX(0); }
-                10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-                20%, 40%, 60%, 80% { transform: translateX(10px); }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Mulai game saat halaman dimuat
-        window.onload = initGame;
+			if (startup)
+				startup(start);
+			else
+				start();
+		})());
     </script>
 </body>
 </html>
-

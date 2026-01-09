@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK2 Game - Melengkapi Kalimat</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin: 20px 0;
+            color: #e74c3c;
+        }
+        h1 {
+            font-size: 2.8rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #e74c3c, #e67e22);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .game-area {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            margin-bottom: 25px;
+        }
+        .sentence-display {
+            font-size: 1.8rem;
+            line-height: 2.2rem;
+            min-height: 120px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #fdf6e3;
+            border-radius: 15px;
+            border: 2px dashed #ffcc80;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #34495e;
+        }
+        .blank {
+            display: inline-block;
+            min-width: 80px;
+            height: 40px;
+            border-bottom: 3px solid #3498db;
+            margin: 0 8px;
+            vertical-align: middle;
+            font-size: 1.6rem;
+            color: #2980b9;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+            padding: 5px 10px;
+        }
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+        .word-item {
+            background: linear-gradient(145deg, #64b5f6, #2196f3);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border: none;
+            user-select: none;
+        }
+        .word-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+            background: linear-gradient(145deg, #42a5f5, #1e88e5);
+        }
+        .word-item.selected {
+            background: linear-gradient(145deg, #4caf50, #2e7d32);
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(76, 175, 80, 0.4);
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 14px 30px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-check {
+            background: linear-gradient(to right, #4caf50, #2e7d32);
+            color: white;
+        }
+        .btn-check:hover {
+            background: linear-gradient(to right, #66bb6a, #388e3c);
+            transform: translateY(-3px);
+        }
+        .btn-next {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+            color: white;
+        }
+        .btn-next:hover {
+            background: linear-gradient(to right, #e95e50, #d32f2f);
+            transform: translateY(-3px);
+        }
+        .feedback {
+            text-align: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            min-height: 60px;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 15px;
+        }
+        .correct {
+            color: #27ae60;
+            background: #e8f5e9;
+            border: 2px solid #2ecc71;
+        }
+        .incorrect {
+            color: #e74c3c;
+            background: #fdf2f2;
+            border: 2px solid #e74c3c;
+        }
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        .score {
+            color: #2980b9;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #2ecc71, #3498db);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .instructions {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .instructions h2 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .instructions ul {
+            padding-left: 25px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            color: #34495e;
+        }
+        @media (max-width: 768px) {
+            .sentence-display {
+                font-size: 1.4rem;
+                line-height: 1.8rem;
+            }
+            .word-bank {
+                gap: 8px;
+            }
+            .word-item {
+                padding: 8px 15px;
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 12px 20px;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎮 HSK2 Kalimat Seru!</h1>
+            <p class="subtitle">Lengkapi kalimat dengan kata yang tepat dari bank kata</p>
+        </header>
+
+        <div class="score-board">
+            <div>Skor: <span id="score" class="score">0</span></div>
+            <div>Level: <span id="level">1</span> / 15</div>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="game-area">
+            <div class="sentence-display" id="sentence-display">
+                <!-- Kalimat akan muncul di sini -->
+            </div>
+            <div class="word-bank" id="word-bank">
+                <!-- Kata-kata akan di-generate di sini -->
+            </div>
+            <div class="controls">
+                <button class="btn btn-check" id="check-btn">Periksa Jawaban ✅</button>
+                <button class="btn btn-next" id="next-btn">Soal Berikutnya ➡️</button>
+            </div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+
+        <div class="instructions">
+            <h2>🎯 Cara Bermain</h2>
+            <ul>
+                <li>Pilih satu kata dari bank kata untuk melengkapi kalimat.</li>
+                <li>Klik "Periksa Jawaban" untuk mengetahui apakah jawaban Anda benar.</li>
+                <li>Jika benar, lanjut ke soal berikutnya. Jika salah, coba lagi!</li>
+                <li>Kumpulkan poin sebanyak-banyaknya dalam 15 soal.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Daftar semua kosakata HSK2
+        const vocabulary = [
+            "旅游", "觉得", "最", "也", "运动", "踢足球", "一起", "要", "新", "它", "眼睛",
+            "生病", "每", "早上", "跑步", "起床", "药", "身体", "出院", "出", "高", "米", "知道", "休息", "忙", "时间",
+            "手表", "千", "报纸", "送", "一下", "牛奶", "房间", "丈夫", "旁边", "真", "粉色", "颜色", "左边", "红色",
+            "生日", "快乐", "给", "接", "晚上", "问", "非常", "开始", "已经", "长", "两", "帮", "介绍",
+            "外边", "准备", "就", "鱼", "吧", "件", "还", "可以", "不错", "考试", "意思", "咖啡", "对", "以后",
+            "门", "外", "自行车", "羊肉", "好吃", "面条", "打篮球", "因为", "所以", "游泳", "经常", "公斤", "姐姐",
+            "教室", "机场", "路", "离", "公司", "远", "公共汽车", "小时", "慢", "快", "过", "走", "到",
+            "再", "让", "告诉", "等", "找", "事情", "服务员", "白", "黑", "贵",
+            "错", "从", "跳舞", "第一", "希望", "问题", "欢迎", "上班", "懂", "完", "题",
+            "课", "帮助", "别", "哥哥", "鸡蛋", "西瓜", "正在", "手机", "洗",
+            "唱歌", "男", "女", "孩子", "右边", "比", "便宜", "说话", "可能", "去年", "姓", "得", "妻子", "雪", "零", "度", "穿", "进", "弟弟", "近",
+            "着", "手", "拿", "铅笔", "班", "长", "宾馆", "一直", "往", "路口",
+            "有意思", "但是", "虽然", "次", "玩儿", "晴", "百",
+            "日", "新年", "票", "火车站", "大家", "更", "妹妹", "阴"
+        ];
+
+        // Soal-soal HSK2 (kalimat dengan satu kata hilang)
+        const questions = [
+      { sentence: "我每天___去公园跑步。", answer: "早上", options: ["早上", "晚上", "中午", "下午"] },
+      { sentence: "这个苹果___好吃。", answer: "非常", options: ["非常", "很多", "一些", "常常"] },
+      { sentence: "他喜欢___足球。", answer: "踢", options: ["踢", "打", "玩", "做"] },
+      { sentence: "我想___你一起去旅游。", answer: "和", options: ["和", "跟", "给", "对"] },
+      { sentence: "这件衣服___漂亮。", answer: "最", options: ["最", "太", "很", "更"] },
+      { sentence: "___你叫什么名字？", answer: "请问", options: ["请问", "问题", "回答", "告诉"] },
+      { sentence: "我___一杯咖啡。", answer: "要", options: ["要", "想", "需要", "可以"] },
+      { sentence: "他___在教室里学习。", answer: "正在", options: ["正在", "已经", "还是", "或者"] },
+      { sentence: "这本书比那本___有意思。", answer: "更", options: ["更", "很", "太", "最"] },
+      { sentence: "___天气很好，我们去游泳吧。", answer: "因为", options: ["因为", "所以", "但是", "虽然"] },
+      { sentence: "我___他的电话号码。", answer: "知道", options: ["知道", "认识", "明白", "懂"] },
+      { sentence: "你___几点起床？", answer: "每天", options: ["每天", "昨天", "明天", "今天"] },
+      { sentence: "这个菜___好吃。", answer: "真", options: ["真", "很", "太", "非常"] },
+      { sentence: "我的房间在你的___。", answer: "旁边", options: ["旁边", "里面", "外面", "上面"] },
+      { sentence: "我___坐飞机去北京。", answer: "准备", options: ["准备", "打算", "想要", "希望"] },
+      { sentence: "请___一下，我马上就来。", answer: "等", options: ["等", "站", "坐", "走"] },
+      { sentence: "我___看书和听音乐。", answer: "喜欢", options: ["喜欢", "爱好", "想", "要"] },
+      { sentence: "这个电影___，很有意思。", answer: "不错", options: ["不错", "好看", "漂亮", "高兴"] },
+      { sentence: "从我家___学校很近。", answer: "到", options: ["到", "去", "从", "在"] },
+      { sentence: "___下雪了，天气很冷。", answer: "外边", options: ["外边", "里边", "上边", "下边"] },
+      { sentence: "我___你是对的。", answer: "觉得", options: ["觉得", "认为", "知道", "明白"] },
+      { sentence: "___你不来？", answer: "为什么", options: ["为什么", "怎么", "什么", "哪里"] },
+      { sentence: "我___喜欢运动。", answer: "也", options: ["也", "都", "还", "又"] },
+      { sentence: "这是一本___书。", answer: "新", options: ["新", "旧", "好", "大"] },
+      { sentence: "___的眼睛很漂亮。", answer: "它", options: ["它", "我", "你", "们"] },
+      { sentence: "他___了，需要休息。", answer: "生病", options: ["生病", "高兴", "忙", "累"] },
+      { sentence: "医生让我吃___。", answer: "药", options: ["药", "饭", "菜", "水"] },
+      { sentence: "运动对___很好。", answer: "身体", options: ["身体", "头", "手", "脚"] },
+      { sentence: "他明天可以___。", answer: "出院", options: ["出院", "住院", "看病", "休息"] },
+      { sentence: "请___去吧。", answer: "出", options: ["出", "进", "来", "回"] },
+      { sentence: "他很___，有1米80。", answer: "高", options: ["高", "矮", "胖", "瘦"] },
+      { sentence: "这个房间10___长。", answer: "米", options: ["米", "厘米", "公里", "尺"] },
+      { sentence: "我很___，没有时间。", answer: "忙", options: ["忙", "累", "闲", "懒"] },
+      { sentence: "___过得真快。", answer: "时间", options: ["时间", "日子", "年", "月"] },
+      { sentence: "这个___很贵。", answer: "手表", options: ["手表", "手机", "眼镜", "钱包"] },
+      { sentence: "这个要一___元。", answer: "千", options: ["千", "百", "万", "十"] },
+      { sentence: "爸爸在看___。", answer: "报纸", options: ["报纸", "书", "电视", "电影"] },
+      { sentence: "我要___你一个礼物。", answer: "送", options: ["送", "给", "拿", "买"] },
+      { sentence: "我喝___牛奶。", answer: "一下", options: ["一下", "一点", "一些", "一杯"] },
+      { sentence: "早上我喝一杯___。", answer: "牛奶", options: ["牛奶", "水", "茶", "咖啡"] },
+      { sentence: "这是我的___。", answer: "房间", options: ["房间", "家", "房子", "屋子"] },
+      { sentence: "她的___很忙。", answer: "丈夫", options: ["丈夫", "妻子", "爸爸", "妈妈"] },
+      { sentence: "我喜欢___的衣服。", answer: "粉色", options: ["粉色", "蓝色", "绿色", "黄色"] },
+      { sentence: "你喜欢什么___？", answer: "颜色", options: ["颜色", "衣服", "东西", "样子"] },
+      { sentence: "银行在___。", answer: "左边", options: ["左边", "右边", "前边", "后边"] },
+      { sentence: "我喜欢___的花。", answer: "红色", options: ["红色", "白色", "黑色", "绿色"] },
+      { sentence: "今天是我的___。", answer: "生日", options: ["生日", "节日", "假日", "周末"] },
+      { sentence: "祝你生日___！", answer: "快乐", options: ["快乐", "高兴", "开心", "幸福"] },
+      { sentence: "我___你一本书。", answer: "给", options: ["给", "送", "拿", "买"] },
+      { sentence: "我去机场___她。", answer: "接", options: ["接", "送", "等", "找"] },
+      { sentence: "我___八点回家。", answer: "晚上", options: ["晚上", "早上", "中午", "下午"] },
+      { sentence: "我想___你一个问题。", answer: "问", options: ["问", "告诉", "说", "讲"] },
+      { sentence: "考试___开始了。", answer: "已经", options: ["已经", "正在", "马上", "快要"] },
+      { sentence: "她的头发很___。", answer: "长", options: ["长", "短", "多", "少"] },
+      { sentence: "我有___个苹果。", answer: "两", options: ["两", "二", "三", "四"] },
+      { sentence: "请___我做这道题。", answer: "帮", options: ["帮", "教", "给", "让"] },
+      { sentence: "请___一下你自己。", answer: "介绍", options: ["介绍", "说", "讲", "告诉"] },
+      { sentence: "天气很好，我们___去玩儿吧。", answer: "就", options: ["就", "才", "都", "也"] },
+      { sentence: "我喜欢吃___。", answer: "鱼", options: ["鱼", "肉", "菜", "饭"] },
+      { sentence: "我们一起去___？", answer: "吧", options: ["吧", "呢", "啊", "吗"] },
+      { sentence: "我买了一___衣服。", answer: "件", options: ["件", "条", "个", "双"] },
+      { sentence: "我___有一点儿时间。", answer: "还", options: ["还", "也", "都", "又"] },
+      { sentence: "你___进来。", answer: "可以", options: ["可以", "能", "会", "要"] },
+      { sentence: "这个___是什么？", answer: "意思", options: ["意思", "问题", "事情", "东西"] },
+      { sentence: "明天有___，我要好好准备。", answer: "考试", options: ["考试", "比赛", "会议", "活动"] },
+      { sentence: "___不起，我错了。", answer: "对", options: ["对", "是", "好", "行"] },
+      { sentence: "___我们再见面吧。", answer: "以后", options: ["以后", "以前", "现在", "将来"] },
+      { sentence: "请开___。", answer: "门", options: ["门", "窗", "灯", "电视"] },
+      { sentence: "___面很冷。", answer: "外", options: ["外", "里", "上", "下"] },
+      { sentence: "我骑___上学。", answer: "自行车", options: ["自行车", "汽车", "火车", "飞机"] },
+      { sentence: "我喜欢吃___。", answer: "羊肉", options: ["羊肉", "牛肉", "鸡肉", "猪肉"] },
+      { sentence: "这个___很好吃。", answer: "面条", options: ["面条", "米饭", "饺子", "包子"] },
+      { sentence: "他喜欢___。", answer: "打篮球", options: ["打篮球", "踢足球", "游泳", "跑步"] },
+      { sentence: "___下雨了，___我不去了。", answer: "因为", options: ["因为", "所以", "但是", "虽然"] },
+      { sentence: "因为下雨了，___我不去了。", answer: "所以", options: ["所以", "因为", "但是", "虽然"] },
+      { sentence: "我___去游泳。", answer: "经常", options: ["经常", "总是", "有时", "很少"] },
+      { sentence: "我买了5___苹果。", answer: "公斤", options: ["公斤", "米", "个", "块"] },
+      { sentence: "我___在北京工作。", answer: "姐姐", options: ["姐姐", "妹妹", "哥哥", "弟弟"] },
+      { sentence: "学生在___上课。", answer: "教室", options: ["教室", "办公室", "房间", "客厅"] },
+      { sentence: "我要去___坐飞机。", answer: "机场", options: ["机场", "火车站", "汽车站", "地铁站"] },
+      { sentence: "我在___上走。", answer: "路", options: ["路", "街", "道", "桥"] },
+      { sentence: "学校___我家很近。", answer: "离", options: ["离", "从", "到", "在"] },
+      { sentence: "他在___上班。", answer: "公司", options: ["公司", "学校", "医院", "商店"] },
+      { sentence: "我家离学校很___。", answer: "远", options: ["远", "近", "大", "小"] },
+      { sentence: "我坐___去上班。", answer: "公共汽车", options: ["公共汽车", "出租车", "地铁", "火车"] },
+      { sentence: "开车要一个___。", answer: "小时", options: ["小时", "分钟", "天", "星期"] },
+      { sentence: "他走得很___。", answer: "慢", options: ["慢", "快", "好", "远"] },
+      { sentence: "你走___一点！", answer: "快", options: ["快", "慢", "好", "多"] },
+      { sentence: "我___过北京。", answer: "去", options: ["去", "来", "到", "走"] },
+      { sentence: "请往前___。", answer: "走", options: ["走", "跑", "来", "去"] },
+      { sentence: "我___了学校。", answer: "到", options: ["到", "去", "来", "走"] },
+      { sentence: "我们___见！", answer: "再", options: ["再", "又", "还", "也"] },
+      { sentence: "老师___我们写作业。", answer: "让", options: ["让", "叫", "给", "帮"] },
+      { sentence: "请___我怎么去。", answer: "告诉", options: ["告诉", "说", "讲", "问"] },
+      { sentence: "我去___他。", answer: "找", options: ["找", "看", "等", "接"] },
+      { sentence: "我有一个___要做。", answer: "事情", options: ["事情", "工作", "问题", "东西"] },
+      { sentence: "___，要一杯咖啡。", answer: "服务员", options: ["服务员", "老师", "医生", "司机"] },
+      { sentence: "这是___颜色。", answer: "白", options: ["白", "黑", "红", "蓝"] },
+      { sentence: "我穿___色的衣服。", answer: "黑", options: ["黑", "白", "红", "蓝"] },
+      { sentence: "这个东西太___了。", answer: "贵", options: ["贵", "便宜", "好", "坏"] },
+      { sentence: "你说得不___。", answer: "错", options: ["错", "对", "好", "行"] },
+      { sentence: "___北京到上海。", answer: "从", options: ["从", "到", "离", "在"] },
+      { sentence: "她喜欢___。", answer: "跳舞", options: ["跳舞", "唱歌", "画画", "写字"] },
+      { sentence: "这是我___次来中国。", answer: "第一", options: ["第一", "第二", "一", "二"] },
+      { sentence: "我___你身体健康。", answer: "希望", options: ["希望", "想", "觉得", "认为"] },
+      { sentence: "你有什么___吗？", answer: "问题", options: ["问题", "事情", "办法", "意见"] },
+      { sentence: "___来到我们学校。", answer: "欢迎", options: ["欢迎", "请", "谢谢", "对不起"] },
+      { sentence: "他每天8点___。", answer: "上班", options: ["上班", "下班", "工作", "休息"] },
+      { sentence: "你___中文吗？", answer: "懂", options: ["懂", "会", "知道", "认识"] },
+      { sentence: "作业做___了。", answer: "完", options: ["完", "好", "对", "错"] },
+      { sentence: "这道___很难。", answer: "题", options: ["题", "问题", "课", "作业"] },
+      { sentence: "我们上___吧。", answer: "课", options: ["课", "学", "班", "课"] },
+      { sentence: "谢谢你的___。", answer: "帮助", options: ["帮助", "帮忙", "帮", "助"] },
+      { sentence: "___客气！", answer: "别", options: ["别", "不", "没", "不要"] },
+      { sentence: "我___在日本。", answer: "哥哥", options: ["哥哥", "弟弟", "姐姐", "妹妹"] },
+      { sentence: "早上我吃___。", answer: "鸡蛋", options: ["鸡蛋", "面包", "牛奶", "水果"] },
+      { sentence: "夏天我喜欢吃___。", answer: "西瓜", options: ["西瓜", "苹果", "香蕉", "橙子"] },
+      { sentence: "他___看电视呢。", answer: "正在", options: ["正在", "已经", "马上", "刚才"] },
+      { sentence: "我的___在哪儿？", answer: "手机", options: ["手机", "电话", "电脑", "相机"] },
+      { sentence: "我要___手。", answer: "洗", options: ["洗", "擦", "抹", "摸"] },
+      { sentence: "她喜欢___歌。", answer: "唱", options: ["唱", "听", "写", "说"] },
+      { sentence: "他是___的。", answer: "男", options: ["男", "女", "老", "小"] },
+      { sentence: "她是___的。", answer: "女", options: ["女", "男", "老", "小"] },
+      { sentence: "那个___很可爱。", answer: "孩子", options: ["孩子", "学生", "人", "朋友"] },
+      { sentence: "银行在___。", answer: "右边", options: ["右边", "左边", "前边", "后边"] },
+      { sentence: "这个___那个贵。", answer: "比", options: ["比", "和", "跟", "对"] },
+      { sentence: "这个很___。", answer: "便宜", options: ["便宜", "贵", "好", "坏"] },
+      { sentence: "别___了！", answer: "说话", options: ["说话", "讲话", "谈话", "聊天"] },
+      { sentence: "他___会来。", answer: "可能", options: ["可能", "一定", "肯定", "当然"] },
+      { sentence: "我___去过北京。", answer: "去年", options: ["去年", "今年", "明年", "每年"] },
+      { sentence: "你___什么？", answer: "姓", options: ["姓", "叫", "名", "字"] },
+      { sentence: "你跑___真快！", answer: "得", options: ["得", "的", "地", "着"] },
+      { sentence: "他的___很漂亮。", answer: "妻子", options: ["妻子", "丈夫", "爱人", "老婆"] },
+      { sentence: "冬天会下___。", answer: "雪", options: ["雪", "雨", "冰", "霜"] },
+      { sentence: "今天___度。", answer: "零", options: ["零", "一", "十", "百"] },
+      { sentence: "今天20___。", answer: "度", options: ["度", "℃", "度数", "温度"] },
+      { sentence: "我要___衣服。", answer: "穿", options: ["穿", "戴", "披", "套"] },
+      { sentence: "请___来。", answer: "进", options: ["进", "出", "来", "去"] },
+      { sentence: "我___在美国。", answer: "弟弟", options: ["弟弟", "哥哥", "姐姐", "妹妹"] },
+      { sentence: "学校离我家很___。", answer: "近", options: ["近", "远", "大", "小"] },
+      { sentence: "她穿___一件红衣服。", answer: "着", options: ["着", "了", "过", "的"] },
+      { sentence: "我用___写字。", answer: "手", options: ["手", "笔", "本", "纸"] },
+      { sentence: "请___着这本书。", answer: "拿", options: ["拿", "带", "提", "抱"] },
+      { sentence: "我用___写字。", answer: "铅笔", options: ["铅笔", "钢笔", "毛笔", "圆珠笔"] },
+      { sentence: "我们是一个___的。", answer: "班", options: ["班", "课", "组", "队"] },
+      { sentence: "你头发真___！", answer: "长", options: ["长", "短", "多", "少"] },
+      { sentence: "我们住在___。", answer: "宾馆", options: ["宾馆", "酒店", "旅馆", "饭店"] },
+      { sentence: "我___往前走。", answer: "一直", options: ["一直", "总是", "常常", "经常"] },
+      { sentence: "___前走100米。", answer: "往", options: ["往", "向", "朝", "对"] },
+      { sentence: "在___右转。", answer: "路口", options: ["路口", "路边", "路上", "路中"] },
+      { sentence: "这个很___。", answer: "有意思", options: ["有意思", "没意思", "好玩", "无聊"] },
+      { sentence: "很贵，___很好。", answer: "但是", options: ["但是", "可是", "不过", "然而"] },
+      { sentence: "___很贵，但是很好。", answer: "虽然", options: ["虽然", "尽管", "即使", "就算"] },
+      { sentence: "我去过三___北京。", answer: "次", options: ["次", "遍", "回", "趟"] },
+      { sentence: "我喜欢___儿。", answer: "玩", options: ["玩", "游", "乐", "耍"] },
+      { sentence: "今天天气___。", answer: "晴", options: ["晴", "阴", "雨", "雪"] },
+      { sentence: "一___个学生。", answer: "百", options: ["百", "千", "万", "十"] },
+      { sentence: "今天是___期一。", answer: "星", options: ["星", "周", "礼", "天"] },
+      { sentence: "明天是新___。", answer: "年", options: ["年", "月", "日", "天"] },
+      { sentence: "我要买飞机___。", answer: "票", options: ["票", "卡", "证", "券"] },
+      { sentence: "我要去___。", answer: "火车站", options: ["火车站", "汽车站", "机场", "码头"] },
+      { sentence: "___都来了。", answer: "大家", options: ["大家", "人家", "我们", "你们"] },
+      { sentence: "今天___冷了。", answer: "更", options: ["更", "很", "太", "最"] },
+      { sentence: "我___在上海工作。", answer: "妹妹", options: ["妹妹", "姐姐", "弟弟", "哥哥"] },
+      { sentence: "今天天气___。", answer: "阴", options: ["阴", "晴", "雨", "雪"] }
+        ];
+
+        // Variabel game
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedWord = null;
+
+        // Elemen DOM
+        const sentenceDisplay = document.getElementById('sentence-display');
+        const wordBank = document.getElementById('word-bank');
+        const checkBtn = document.getElementById('check-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const feedback = document.getElementById('feedback');
+        const scoreElement = document.getElementById('score');
+        const levelElement = document.getElementById('level');
+        const progressBar = document.getElementById('progress-bar');
+
+        // Inisialisasi game
+        function initGame() {
+            loadQuestion();
+            updateScore();
+        }
+
+        // Muat soal saat ini
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                endGame();
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            levelElement.textContent = (currentQuestionIndex + 1) + " / " + questions.length;
+            const progressPercent = ((currentQuestionIndex) / questions.length) * 100;
+            progressBar.style.width = progressPercent + '%';
+
+            // Tampilkan kalimat dengan blank
+            sentenceDisplay.innerHTML = q.sentence.replace('___', '<span class="blank" id="blank">?</span>');
+
+            // Buat pilihan kata
+            wordBank.innerHTML = '';
+            const allOptions = [...q.options];
+            
+            // Pastikan jawaban benar ada di opsi
+            if (!allOptions.includes(q.answer)) {
+                allOptions.push(q.answer);
+                // Acak lagi
+                shuffleArray(allOptions);
+                allOptions.length = 4;
+            }
+
+            shuffleArray(allOptions);
+
+            allOptions.forEach(word => {
+                const btn = document.createElement('button');
+                btn.className = 'word-item';
+                btn.textContent = word;
+                btn.onclick = () => selectWord(btn, word);
+                wordBank.appendChild(btn);
+            });
+
+            // Reset state
+            selectedWord = null;
+            feedback.textContent = '';
+            feedback.className = 'feedback';
+            nextBtn.style.display = 'none';
+        }
+
+        // Pilih kata
+        function selectWord(element, word) {
+            // Hilangkan seleksi sebelumnya
+            document.querySelectorAll('.word-item').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Tandai yang dipilih
+            element.classList.add('selected');
+            selectedWord = word;
+            
+            // Tampilkan di blank
+            const blank = document.getElementById('blank');
+            if (blank) {
+                blank.textContent = word;
+            }
+        }
+
+        // Periksa jawaban
+        checkBtn.addEventListener('click', () => {
+            if (!selectedWord) {
+                feedback.textContent = '⚠️ Silakan pilih satu kata terlebih dahulu!';
+                feedback.className = 'feedback incorrect';
+                return;
+            }
+
+            const correct = selectedWord === questions[currentQuestionIndex].answer;
+            
+            if (correct) {
+                score++;
+                feedback.textContent = '🎉 Benar! Jawaban yang tepat.';
+                feedback.className = 'feedback correct';
+                createConfetti();
+                scoreElement.textContent = score;
+                
+                // Tampilkan tombol berikutnya
+                nextBtn.style.display = 'inline-block';
+                checkBtn.style.display = 'none';
+            } else {
+                feedback.textContent = '❌ Salah. Coba lagi!';
+                feedback.className = 'feedback incorrect';
+                
+                // Goyangkan blank
+                const blank = document.getElementById('blank');
+                if (blank) {
+                    blank.style.animation = 'none';
+                    setTimeout(() => {
+                        blank.style.animation = 'shake 0.5s';
+                    }, 10);
+                }
+            }
+        });
+
+        // Soal berikutnya
+        nextBtn.addEventListener('click', () => {
+            currentQuestionIndex++;
+            checkBtn.style.display = 'inline-block';
+            nextBtn.style.display = 'none';
+            loadQuestion();
+        });
+
+        // Akhiri game
+        function endGame() {
+            const percentage = Math.round((score / questions.length) * 100);
+            let message = `🎮 Game Selesai!\n\nSkor Anda: ${score} / ${questions.length} (${percentage}%)`;
+            
+            if (percentage >= 90) {
+                message += "\n\n🌟 Luar biasa! Anda ahli HSK2!";
+            } else if (percentage >= 70) {
+                message += "\n\n👍 Bagus! Terus belajar ya!";
+            } else if (percentage >= 50) {
+                message += "\n\n🙂 Lumayan! Coba lagi untuk skor lebih tinggi.";
+            } else {
+                message += "\n\n💪 Jangan menyerah! Latihan lagi yuk!";
+            }
+            
+            sentenceDisplay.innerHTML = `<div style="font-size:1.8rem; color:#e74c3c;">${message}</div>`;
+            wordBank.innerHTML = '';
+            feedback.innerHTML = '';
+            checkBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            
+            // Tombol ulang game
+            const restartBtn = document.createElement('button');
+            restartBtn.className = 'btn btn-check';
+            restartBtn.textContent = 'Ulangi Game 🔁';
+            restartBtn.style.marginTop = '20px';
+            restartBtn.onclick = restartGame;
+            sentenceDisplay.appendChild(document.createElement('br'));
+            sentenceDisplay.appendChild(restartBtn);
+        }
+
+        // Ulangi game
+        function restartGame() {
+            currentQuestionIndex = 0;
+            score = 0;
+            scoreElement.textContent = score;
+            checkBtn.style.display = 'inline-block';
+            nextBtn.style.display = 'none';
+            loadQuestion();
+        }
+
+        // Fungsi bantu
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function updateScore() {
+            scoreElement.textContent = score;
+        }
+
+        function createConfetti() {
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#1abc9c'];
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = confetti.style.width;
+                document.body.appendChild(confetti);
+
+                const animation = confetti.animate([
+                    { top: '-10px', transform: 'translateX(0px) rotate(0deg)' },
+                    { top: '100vh', transform: `translateX(${(Math.random() - 0.5) * 200}px) rotate(${Math.random() * 360}deg)` }
+                ], {
+                    duration: Math.random() * 2000 + 2000,
+                    easing: 'cubic-bezier(0,0.9,0.57,1)'
+                });
+
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        // Tambahkan animasi shake ke CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+                20%, 40%, 60%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Mulai game saat halaman dimuat
+        window.onload = initGame;
+    </script>
+</body>
+</html>
+
